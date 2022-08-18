@@ -62,14 +62,16 @@ pvector<NodeID> ShiloachVishkin(const Graph &g) {
     num_iter++;
     #pragma omp parallel for
     for (NodeID u=0; u < g.num_nodes(); u++) {
-      for (NodeID v : g.out_neigh(u)) {
+      unsigned long buf = g.out_degree(u);
+      SimLoopCount(u, buf);
+      for (NodeID v : g.out_neigh(u)) { // BAD_BRANCH (31% + 11% + 9%)
         NodeID comp_u = comp[u];
         NodeID comp_v = comp[v];
-        if (comp_u == comp_v) continue;
+        if (comp_u == comp_v) continue;  // BAD_BRANCH (42%)
         // Hooking condition so lower component ID wins independent of direction
         NodeID high_comp = comp_u > comp_v ? comp_u : comp_v;
         NodeID low_comp = comp_u + (comp_v - high_comp);
-        if (high_comp == comp[high_comp]) {
+        if (high_comp == comp[high_comp]) { // BAD_BRANCH (11%)
           change = true;
           comp[high_comp] = low_comp;
         }
