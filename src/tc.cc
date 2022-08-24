@@ -53,9 +53,9 @@ size_t OrderedCount(const Graph &g) {
         break;
       auto it = g.out_neigh(u).begin();
       for (NodeID w : g.out_neigh(v)) {
-        if (w > v)
+        if (w > v)  // BAD_BRANCH (5%)
           break;
-        while (*it < w)
+        while (*it < w) // BAD_BRANCH (61% + 21%)
           it++;
         if (w == *it)
           total++;
@@ -64,7 +64,6 @@ size_t OrderedCount(const Graph &g) {
   }
   return total;
 }
-
 
 // heuristic to see if sufficently dense power-law graph
 bool WorthRelabelling(const Graph &g) {
