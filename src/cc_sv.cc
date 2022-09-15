@@ -63,7 +63,6 @@ pvector<NodeID> ShiloachVishkin(const Graph &g) {
     #pragma omp parallel for
     for (NodeID u=0; u < g.num_nodes(); u++) {
       unsigned long buf = g.out_degree(u);
-      SimLoopCount(u, buf);
       for (NodeID v : g.out_neigh(u)) { // BAD_BRANCH (31% + 11% + 9%)
         NodeID comp_u = comp[u];
         NodeID comp_v = comp[v];
